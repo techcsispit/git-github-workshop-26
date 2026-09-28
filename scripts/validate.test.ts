@@ -14,7 +14,7 @@ const good = { name: 'Riya Shah', github_username: 'riya', bio: 'Hi', interests:
 
 describe('checkDirectory', () => {
   it('passes a folder of valid profiles', async () => {
-    await writeFile(path.join(dir, 'riya.json'), JSON.stringify(good));
+    await writeFile(path.join(dir, 'contributor-1.json'), JSON.stringify(good));
     await writeFile(path.join(dir, '_example.json'), '{ ignored }');
     expect(await checkDirectory(dir)).toEqual([]);
   });

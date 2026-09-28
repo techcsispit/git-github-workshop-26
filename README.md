@@ -7,7 +7,7 @@ The Source Start contributors board. Add one small file about yourself and your 
 ## Add yourself
 
 1. Fork this repo.
-2. Copy `profiles/_example.json` to `profiles/<your-github-username>.json` and fill it in.
+2. Copy `profiles/_example.json` to a new `.json` file in `profiles/` and fill it in.
 3. Commit, push to your fork, and open a pull request.
 
 ```json
@@ -23,13 +23,13 @@ The Source Start contributors board. Add one small file about yourself and your 
 }
 ```
 
-`language`, `link` and `fun_fact` are optional. Your profile photo comes from your GitHub account.
+`language`, `link` and `fun_fact` are optional. Your photo comes from your GitHub account.
 
 A check runs on your pull request. If it fails, click **Details** to see exactly what's wrong with your file.
 
 ### Rules for a profile
 
-- The file name matches your GitHub username.
+- The file is a `.json` file, and `github_username` matches your GitHub account.
 - `name` is 2 to 50 characters, `bio` at most 120, `fun_fact` at most 100.
 - `interests` has 1 to 5 short entries.
 - `batch_year` is a number, like `2029`, not `"2029"`.

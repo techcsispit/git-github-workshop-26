@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { accentFor } from '@/lib/board';
+import { accentFor, cardSuit } from '@/lib/board';
 import type { Profile } from '@/lib/types';
 
 export default function Spotlight({ profile }: { profile: Profile }) {
-  const accent = accentFor(profile.github_username);
+  const accent = accentFor(profile.github_username, cardSuit(profile));
   return (
     <motion.div
       className="spotlight"
@@ -21,7 +21,7 @@ export default function Spotlight({ profile }: { profile: Profile }) {
         exit={{ scale: 0.3, y: 400, opacity: 0, transition: { duration: 0.6, ease: [0.4, 0, 1, 1] } }}
         transition={{ type: 'spring', stiffness: 140, damping: 16 }}
       >
-        <p className="spotlight-eyebrow">Just merged</p>
+        <p className="spotlight-eyebrow">Player joined</p>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="spotlight-avatar" src={`https://github.com/${profile.github_username}.png?size=400`} alt="" />
         <h2 className="spotlight-name">{profile.name}</h2>

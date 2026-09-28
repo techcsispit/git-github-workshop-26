@@ -169,9 +169,7 @@ fn hash21(p: vec2f) -> f32 {
   let local = (pixel - center) / (cellPx * 0.5);
   let cellUv = center / resolution;
 
-  if (params.motion.z > 0.5 && textureSampleLevel(maskTexture, maskSampler, cellUv, 0.0).r > 0.5) {
-    return vec4f(background, select(0.0, 1.0, toSurface));
-  }
+  let textMask = params.motion.z > 0.5 && textureSampleLevel(maskTexture, maskSampler, cellUv, 0.0).r > 0.5;
 
   var level = 1.0;
   let fade = params.motion.w;
@@ -195,6 +193,7 @@ fn hash21(p: vec2f) -> f32 {
     shape = mode - 1;
     size = dotSize * mix(0.45, 1.0, f32(stepped) / 2.0);
   }
+  if (textMask) { size = max(size, 0.9); }
   let introProgress = params.placement.w;
   var front = 0.0;
   if (introProgress < ${INTRO_END.toFixed(2)}) {
@@ -215,10 +214,11 @@ fn hash21(p: vec2f) -> f32 {
   let coverage = smoothstep(aa, -aa, shapeDistance(local, shape, size));
 
   let tint = mix(params.color.rgb, params.hover.rgb, max(smoothstep(0.15, 0.85, charge), front * 0.35));
+  let pixelTint = select(tint, vec3f(1.0), textMask);
 
-  let rgb = mix(background, tint, coverage * level);
+  let rgb = mix(background, pixelTint, coverage * level);
   if (toSurface) { return vec4f(rgb, 1.0); }
-  let luminance = dot(tint * level, vec3f(0.2126, 0.7152, 0.0722));
+  let luminance = dot(pixelTint * level, vec3f(0.2126, 0.7152, 0.0722));
   let glow = max(0.0, (luminance - GLOW_THRESHOLD) / (1.0 - GLOW_THRESHOLD)) * coverage;
   return vec4f(rgb, glow);
 }

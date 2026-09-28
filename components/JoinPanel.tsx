@@ -8,10 +8,11 @@ export default async function JoinPanel({ repoUrl }: { repoUrl: string }) {
       <LazyDither waveColor={[0.3, 0.3, 0.3]} colorNum={4} pixelSize={3} waveSpeed={0.02} enableMouseInteraction={false} />
       <div className="join-inner">
         <div>
-          <h2>Put your card on the board</h2>
+          <p className="join-joker">JOKER · ALL SUITS WELCOME</p>
+          <h2>Game rules</h2>
           <ol className="steps">
             <li>Fork <a href={repoUrl}>the repo</a>.</li>
-            <li>Copy <code>profiles/_example.json</code> to <code>profiles/&lt;your-username&gt;.json</code> and fill it in.</li>
+            <li>Copy <code>profiles/_example.json</code> to a new <code>.json</code> file and fill it in.</li>
             <li>Commit, push, and open a pull request.</li>
             <li>Once it&apos;s merged, your card shows up here within a minute.</li>
           </ol>

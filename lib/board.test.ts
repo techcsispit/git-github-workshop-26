@@ -37,8 +37,8 @@ describe('board', () => {
     expect(hasInterest(person('A', 'a', ['Go']), 'Rust')).toBe(false);
   });
 
-  it('gives each username a fixed colour', () => {
-    expect(accentFor('Riya')).toBe(accentFor('riya'));
+  it('gives the same suit a stable colour regardless of username casing', () => {
+    expect(accentFor('Riya', 'heart')).toBe(accentFor('riya', 'heart'));
   });
 });
 
@@ -115,9 +115,12 @@ describe('checkProfile', () => {
     expect(checkProfile({ ...good, link: 'https://riya.dev', language: 'Go', fun_fact: 'Cats' }, 'riya.json')).toEqual([]);
   });
 
+  it('allows profile filenames independent of GitHub usernames', () => {
+    expect(checkProfile(good, 'someone-else.json')).toEqual([]);
+  });
+
   it('explains mistakes', () => {
     expect(checkProfile({ ...good, batch_year: '2029' }, 'riya.json')).toHaveLength(1);
-    expect(checkProfile(good, 'someone-else.json')[0]).toMatch(/riya\.json/);
     expect(checkProfile({ ...good, intrests: [] }, 'riya.json')[0]).toMatch(/unknown field/);
     expect(checkProfile({ ...good, link: 'javascript:alert(1)' }, 'riya.json')).toHaveLength(1);
   });

@@ -6,6 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 const ShapeWaves = dynamic(() => import('./ShapeWaves'), { ssr: false });
 const Dither = dynamic(() => import('./Dither'), { ssr: false });
 
+function HeroSuits() {
+  return (
+    <div className="hero-suits" aria-hidden="true"><span>♠</span><span>♣</span><span>♦</span><span>♥</span></div>
+  );
+}
+
 // ShapeWaves needs WebGPU. Where that's missing (or fails), Dither (WebGL) is used instead.
 export function HeroBackdrop({ text, fontFamily }: { text: string; fontFamily: string }) {
   const [webgpu, setWebgpu] = useState<boolean | null>(null);
@@ -15,27 +21,33 @@ export function HeroBackdrop({ text, fontFamily }: { text: string; fontFamily: s
     return (
       <>
         <Dither waveColor={[0.32, 0.32, 0.32]} colorNum={4} pixelSize={3} waveSpeed={0.03} mouseRadius={0.35} />
-        <div className="hero-title" aria-hidden="true">
-          {text}
-        </div>
+        <HeroSuits />
+        <div className="hero-wordmark" aria-hidden="true">{text}</div>
       </>
     );
   }
   return (
-    <ShapeWaves
-      text={text}
-      fontFamily={fontFamily}
-      fontWeight={700}
-      textSize={0.26}
-      cellSize={11}
-      color="#8a8a8a"
-      hoverColor="#ffffff"
-      fade={0.3}
-      onError={(error: Error) => {
-        console.error('ShapeWaves failed, falling back to Dither:', error);
-        setWebgpu(false);
-      }}
-    />
+    <>
+      <ShapeWaves
+        text={text}
+        fontFamily={fontFamily}
+        fontWeight={700}
+        textSize={0.36}
+        cellSize={7}
+        dotSize={0.72}
+        color="#ff7180"
+        hoverColor="#73e8f2"
+        glow={0.6}
+        fade={0.04}
+        interactive
+        introDuration={1.8}
+        onError={(error: Error) => {
+          console.error('ShapeWaves failed, falling back to Dither:', error);
+          setWebgpu(false);
+        }}
+      />
+      <HeroSuits />
+    </>
   );
 }
 
@@ -55,24 +67,28 @@ export function LazyDither(props: React.ComponentProps<typeof Dither>) {
 export function LiveCounter({ count, fontFamily }: { count: number; fontFamily: string }) {
   const [webgpu, setWebgpu] = useState<boolean | null>(null);
   useEffect(() => setWebgpu('gpu' in navigator), []);
-  if (webgpu === null) return null;
-  if (!webgpu) return <div className="live-counter-fallback">{count}</div>;
+  if (webgpu !== true) return <div className="live-counter-fallback">{count}</div>;
   return (
-    <ShapeWaves
-      text={String(count)}
-      fontFamily={fontFamily}
-      fontWeight={800}
-      textSize={0.8}
-      cellSize={9}
-      color="#8a8a8a"
-      hoverColor="#a3e635"
-      fade={0.15}
-      introKey={count}
-      interactive={false}
-      onError={(error: Error) => {
-        console.error('ShapeWaves failed, showing a plain counter:', error);
-        setWebgpu(false);
-      }}
-    />
+    <>
+      <ShapeWaves
+        text={String(count)}
+        fontFamily={fontFamily}
+        fontWeight={800}
+        textSize={0.9}
+        cellSize={7}
+        dotSize={0.72}
+        shapes="circles"
+        color="#ff7180"
+        hoverColor="#73e8f2"
+        glow={0.5}
+        fade={0.04}
+        introKey={count}
+        interactive
+        onError={(error: Error) => {
+          console.error('ShapeWaves failed, showing a plain counter:', error);
+          setWebgpu(false);
+        }}
+      />
+    </>
   );
 }

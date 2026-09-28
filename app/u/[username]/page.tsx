@@ -28,7 +28,7 @@ export default async function SharePage({ params }: Props) {
       <ContributorCard profile={profile} />
       <ShareButtons name={profile.name} />
       <p className="muted">
-        <Link href="/#board">See everyone</Link> · <Link href="/#join">Add your own card</Link>
+        <Link href="/#board">See the players</Link> · <Link href="/#join">Enter the game</Link>
       </p>
     </main>
   );

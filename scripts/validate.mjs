@@ -23,8 +23,6 @@ export function checkProfile(p, fileName) {
   if (!isText(p.name, 50) || p.name.trim().length < 2) errors.push('"name" must be 2-50 characters');
   if (typeof p.github_username !== 'string' || !USERNAME.test(p.github_username)) {
     errors.push('"github_username" is not a valid GitHub username');
-  } else if (fileName && fileName.toLowerCase() !== `${p.github_username.toLowerCase()}.json`) {
-    errors.push(`the file should be named ${p.github_username}.json`);
   }
   if (!isText(p.bio, 120)) errors.push('"bio" must be 1-120 characters');
   if (!Array.isArray(p.interests) || p.interests.length < 1 || p.interests.length > 5 || !p.interests.every(i => isText(i, 24))) {

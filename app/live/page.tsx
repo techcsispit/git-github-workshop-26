@@ -11,5 +11,5 @@ export default async function Live() {
   await connection();
   const profiles = await getProfiles();
   const qr = await QRCode.toString(repoUrl, { type: 'svg', margin: 1 });
-  return <LiveBoard initial={profiles} qr={qr} repoUrl={repoUrl} fontFamily={geist.style.fontFamily} />;
+  return <LiveBoard initial={profiles} qr={qr} fontFamily={geist.style.fontFamily} />;
 }

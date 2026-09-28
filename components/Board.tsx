@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
-import { hasInterest, matchesSearch, sortProfiles, topInterests } from '@/lib/board';
+import { hasInterest, matchesSearch, sortProfiles, suitForInterest, SUIT_SYMBOLS, topInterests } from '@/lib/board';
 import type { Profile } from '@/lib/types';
 import { useLiveProfiles } from '@/lib/useLiveProfiles';
 import ContributorCard from './ContributorCard';
@@ -17,18 +17,30 @@ export default function Board({ initial }: { initial: Profile[] }) {
   const visible = sorted.filter((p) => matchesSearch(p, query) && hasInterest(p, interest));
 
   return (
-    <section className="board" id="board">
+    <section
+      className="board"
+      id="board"
+      onPointerMove={(event) => {
+        const bounds = event.currentTarget.getBoundingClientRect();
+        event.currentTarget.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
+        event.currentTarget.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
+      }}
+      onPointerLeave={(event) => {
+        event.currentTarget.style.setProperty('--pointer-x', '-300px');
+        event.currentTarget.style.setProperty('--pointer-y', '-300px');
+      }}
+    >
       <div className="board-head">
         <div>
-          <h2>The board</h2>
+          <h2>The players</h2>
           <p className="muted">
-            {profiles.length} {profiles.length === 1 ? 'contributor' : 'contributors'} so far. Click a card to flip it.
+            {profiles.length} {profiles.length === 1 ? 'player' : 'players'} cleared the entry game. Tap a card to reveal it.
           </p>
         </div>
         <input
           className="search"
           type="search"
-          placeholder="Search by name, username or interest"
+          placeholder="Search players by name, username or suit"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search contributors"
@@ -46,7 +58,8 @@ export default function Board({ initial }: { initial: Profile[] }) {
               className={interest === name ? 'chip chip--on' : 'chip'}
               onClick={() => setInterest(interest === name ? null : name)}
             >
-              {name} <span>{count}</span>
+              <span className={`chip-suit chip-suit--${suitForInterest(name)}`} aria-hidden="true">{SUIT_SYMBOLS[suitForInterest(name)]}</span>
+              {name} <span className="chip-count">{count}</span>
             </button>
           ))}
         </div>

@@ -1,5 +1,18 @@
 import type { Profile } from './types';
 
+export type CardSuit = 'spade' | 'club' | 'diamond' | 'heart';
+export const SUIT_SYMBOLS: Record<CardSuit, string> = { spade: '♠', club: '♣', diamond: '♦', heart: '♥' };
+
+export function suitForInterest(interest: string): CardSuit {
+  const key = interest.toLowerCase().replace(/[\s_.-]/g, '');
+  if (key === 'python') return 'heart';
+  if (key === 'datascience') return 'diamond';
+  if (key === 'webdev' || key === 'webdevelopment') return 'club';
+  return 'spade';
+}
+
+export const cardSuit = (profile: Profile) => suitForInterest(profile.interests[0] ?? '');
+
 export function sortProfiles(profiles: Profile[]): Profile[] {
   return [...profiles].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
 }
@@ -70,8 +83,6 @@ export function hasInterest(profile: Profile, interest: string | null): boolean 
 }
 
 // A stable accent colour per person, so the same card always looks the same.
-export function accentFor(username: string): string {
-  let hash = 0;
-  for (const c of username.toLowerCase()) hash = (hash * 31 + c.charCodeAt(0)) >>> 0;
-  return `hsl(${hash % 360} 85% 65%)`;
+export function accentFor(_username: string, suit?: CardSuit): string {
+  return suit === 'heart' || suit === 'diamond' ? '#ff5266' : '#73e8f2';
 }

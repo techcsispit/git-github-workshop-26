@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { accentFor, findProfile } from '@/lib/board';
+import { accentFor, cardSuit, findProfile } from '@/lib/board';
 import { getProfiles } from '@/lib/profiles';
 
 export const size = { width: 1200, height: 630 };
@@ -8,7 +8,7 @@ export const alt = 'Source Start contributor card';
 
 export default async function Image({ params }: { params: Promise<{ username: string }> }) {
   const profile = findProfile(await getProfiles(), (await params).username);
-  const accent = profile ? accentFor(profile.github_username) : '#a3e635';
+  const accent = profile ? accentFor(profile.github_username, cardSuit(profile)) : '#ff2a3d';
 
   return new ImageResponse(
     (
@@ -18,7 +18,7 @@ export default async function Image({ params }: { params: Promise<{ username: st
           <img src={`https://github.com/${profile.github_username}.png?size=400`} width={300} height={300} style={{ borderRadius: 150, border: `8px solid ${accent}` }} alt="" />
         )}
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <div style={{ display: 'flex', fontSize: 28, letterSpacing: 6, color: '#a3e635', textTransform: 'uppercase' }}>Source Start 2026</div>
+          <div style={{ display: 'flex', fontSize: 28, letterSpacing: 6, color: '#ff2a3d', textTransform: 'uppercase' }}>Source Start 2026</div>
           <div style={{ display: 'flex', fontSize: 76, fontWeight: 800, lineHeight: 1.05, marginTop: 20 }}>{profile?.name ?? 'Source Start'}</div>
           {profile && <div style={{ display: 'flex', fontSize: 34, color: '#9b9ba5', marginTop: 12 }}>{`@${profile.github_username}`}</div>}
           <div style={{ display: 'flex', fontSize: 38, marginTop: 36, color: '#d4d4d8' }}>Made my first open-source contribution.</div>

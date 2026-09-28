@@ -10,7 +10,7 @@ import ContributorCard from './ContributorCard';
 import Spotlight from './Spotlight';
 
 // For the TV: newest first, big counter, and every new arrival gets a few seconds centre stage.
-export default function LiveBoard({ initial, qr, repoUrl, fontFamily }: { initial: Profile[]; qr: string; repoUrl: string; fontFamily: string }) {
+export default function LiveBoard({ initial, qr, fontFamily }: { initial: Profile[]; qr: string; fontFamily: string }) {
   const { profiles, arrivals } = useLiveProfiles(initial, 10_000);
   const [spotlit, setSpotlit] = useState<string[]>([]);
 
@@ -34,23 +34,23 @@ export default function LiveBoard({ initial, qr, repoUrl, fontFamily }: { initia
     <main className="live">
       <header className="live-head">
         <div className="live-stats">
-          <p className="eyebrow">Source Start · live</p>
-          <div className="live-counter" aria-label={`${profiles.length} contributors`}>
+          <p className="eyebrow live-eyebrow">Source Start · live</p>
+          <div className="live-counter" role="img" aria-live="polite" aria-label={`${profiles.length} players cleared the entry game`}>
             <LiveCounter count={profiles.length} fontFamily={fontFamily} />
           </div>
-          <p className="live-label">contributors so far</p>
-          {latest && <p className="live-latest">Latest: {latest.name}</p>}
+          <p className="live-label">PLAYERS CLEARED ENTRY</p>
+          {latest && <p className="live-latest">LATEST ARRIVAL: {latest.name}</p>}
         </div>
         <div className="live-join">
-          <p className="live-join-title">Add your card</p>
+          <p className="live-join-title">Enter the game</p>
           <div className="qr" dangerouslySetInnerHTML={{ __html: qr }} role="img" aria-label="QR code linking to the repository" />
-          <p>{repoUrl.replace(/^https:\/\//, '')}</p>
+          <p className="live-qr-caption">Scan to join. Your first commit is the entry game.</p>
         </div>
       </header>
 
-      <div className="grid grid--compact">
+      <div className="grid grid--projector">
         <AnimatePresence initial={false}>
-          {ordered.map((p) => (
+          {ordered.map((p, index) => (
             <motion.div
               key={p.github_username.toLowerCase()}
               layout
@@ -58,7 +58,7 @@ export default function LiveBoard({ initial, qr, repoUrl, fontFamily }: { initia
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 22 }}
             >
-              <ContributorCard profile={p} compact isNew={arrivals.includes(p.github_username.toLowerCase())} />
+              <ContributorCard profile={p} playerNumber={index + 1} isNew={arrivals.includes(p.github_username.toLowerCase())} />
             </motion.div>
           ))}
         </AnimatePresence>
