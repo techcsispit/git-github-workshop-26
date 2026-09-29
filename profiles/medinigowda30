@@ -1,0 +1,10 @@
+{
+  "name": "Medini Gowda",
+  "github_username": "medinigowda30-prog",
+  "bio": "One line about you, 120 characters at most.",
+  "interests": ["Python", "Web Dev","C++"],
+  "batch_year": 2030,
+  "language": "C",
+  "link": "https://your-site.example",
+  "fun_fact": "Optional. Something people wouldn't guess about you."
+}
