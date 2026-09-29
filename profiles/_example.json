@@ -1,10 +1,10 @@
 {
-  "name": "Your Name",
-  "github_username": "your-github-username",
+  "name": "Rajat Bhatt",
+  "github_username": "rajatbhatt1307 -oss",
   "bio": "One line about you, 120 characters at most.",
-  "interests": ["Python", "Web Dev"],
-  "batch_year": 2029,
-  "language": "Python",
+  "interests": ["c++", "Web Dev"],
+  "batch_year": 2030,
+  "language": "CPP",
   "link": "https://your-site.example",
   "fun_fact": "Optional. Something people wouldn't guess about you."
 }
