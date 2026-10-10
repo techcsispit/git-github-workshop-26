@@ -31,7 +31,7 @@ function Avatar({ username, name, size }: { username: string; name: string; size
 
 const stop = (e: React.PointerEvent) => e.stopPropagation();
 
-export default function ContributorCard({ profile, compact = false, isNew = false, playerNumber }: { profile: Profile; compact?: boolean; isNew?: boolean; playerNumber?: number }) {
+export default function ContributorCard({ profile, compact = false, isNew = false, playerNumber, contributions }: { profile: Profile; compact?: boolean; isNew?: boolean; playerNumber?: number; contributions?: number }) {
   const suit = cardSuit(profile);
   const labels = { spade: 'Low Level', club: 'Web Dev', diamond: 'Data Science', heart: 'Python' };
   const accent = accentFor(profile.github_username, suit);
@@ -64,6 +64,9 @@ export default function ContributorCard({ profile, compact = false, isNew = fals
         <p className="cc-user">@{profile.github_username}</p>
         <p className="cc-bio">{profile.bio}</p>
         <span className="cc-suit-label">{SUIT_SYMBOLS[suit]} {labels[suit]}</span>
+        {contributions !== undefined && (
+          <span className="cc-contrib">{contributions} merged {contributions === 1 ? 'PR' : 'PRs'}</span>
+        )}
         <div className="cc-tags">
           {profile.interests.map((i) => <span key={i}>{i}</span>)}
         </div>

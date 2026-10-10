@@ -17,6 +17,12 @@ export function sortProfiles(profiles: Profile[]): Profile[] {
   return [...profiles].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
 }
 
+// Most merged pull requests first; people with the same count (or none) stay alphabetical.
+export function mostContributions(profiles: Profile[], counts: Record<string, number>): Profile[] {
+  const count = (p: Profile) => counts[profileKey(p)] ?? 0;
+  return sortProfiles(profiles).sort((a, b) => count(b) - count(a));
+}
+
 export function topInterests(profiles: Profile[], n = 8): { interest: string; count: number }[] {
   const counts = new Map<string, { interest: string; count: number }>();
   for (const p of profiles) {
