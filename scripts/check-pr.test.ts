@@ -36,6 +36,8 @@ beforeEach(() => {
   write('profiles/_example.json', profile('your-github-username'));
   write('profiles/amy.json', profile('amy'));
   write('profiles/broken.json', '{ "name": '); // already on main, must not fail other PRs
+  // Also on main: a missing comma, and the file isn't named after its owner (bob).
+  write('profiles/bobs-card.json', '{ "name": "Bob", "github_username": "bob" "bio": "Hi" }');
   git('add', '-A');
   git('commit', '-qm', 'main');
 });
@@ -88,5 +90,35 @@ describe('check-pr', () => {
     const { out } = check('riya');
     expect(out).toMatch(/rename it to riya\.json/);
     expect(out).toMatch(/curly quotes/);
+  });
+
+  it("rejects deleting or overwriting someone else's file even when it isn't valid JSON", () => {
+    unlinkSync(path.join(dir, 'profiles/broken.json'));
+    unlinkSync(path.join(dir, 'profiles/bobs-card.json'));
+    const deleted = check('riya');
+    expect(deleted.ok).toBe(false);
+    expect(deleted.out).toMatch(/broken\.json: this is broken's profile/);
+    expect(deleted.out).toMatch(/bobs-card\.json: this is bob's profile/);
+    git('reset', '-q', '--hard', 'HEAD^');
+
+    write('profiles/broken.json', profile('riya'));
+    write('profiles/bobs-card.json', profile('riya'));
+    const overwritten = check('riya');
+    expect(overwritten.ok).toBe(false);
+    expect(overwritten.out).toMatch(/broken\.json: this is broken's profile/);
+    expect(overwritten.out).toMatch(/bobs-card\.json: this is bob's profile/);
+  });
+
+  it('lets the owner repair or delete their own file that is not valid JSON', () => {
+    write('profiles/bobs-card.json', profile('bob'));
+    expect(check('bob').ok).toBe(true);
+    git('reset', '-q', '--hard', 'HEAD^');
+
+    unlinkSync(path.join(dir, 'profiles/bobs-card.json'));
+    expect(check('Bob').ok).toBe(true);
+    git('reset', '-q', '--hard', 'HEAD^');
+
+    write('profiles/broken.json', profile('broken')); // no username to read, so the file name decides
+    expect(check('broken').ok).toBe(true);
   });
 });

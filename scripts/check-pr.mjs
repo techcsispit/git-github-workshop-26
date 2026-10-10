@@ -14,6 +14,18 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8' });
 const usernameIn = (text) => parseProfile(text).profile?.github_username?.toLowerCase?.();
 const oldVersion = (file) => git('show', `HEAD^1:${file}`);
 
+// Who a file already on main belongs to: its github_username, or, if the file doesn't parse or has
+// no usable username, the username found in its raw text, or last of all its file name. A broken
+// file still belongs to somebody, otherwise anyone could delete it or overwrite it with their own.
+const ownerOf = (file, name) => {
+  const old = oldVersion(file);
+  return (
+    usernameIn(old) ||
+    /"github_username"\s*:\s*"([^"\n]+)"/.exec(old)?.[1].toLowerCase() ||
+    name.replace(/\.json$/i, '').toLowerCase()
+  );
+};
+
 // -z so file names with spaces or non-English letters come through unquoted.
 const fields = git('diff', '--name-status', '--no-renames', '-z', 'HEAD^1', 'HEAD').split('\0').filter(Boolean);
 const changes = [];
@@ -34,8 +46,8 @@ for (const [status, file] of changes) {
 
   // Changing or deleting a file that's already on main: it has to be yours.
   if (status !== 'A' && !maintainer) {
-    const owner = usernameIn(oldVersion(file));
-    if (owner && owner !== author) {
+    const owner = ownerOf(file, name);
+    if (owner !== author) {
       problems.push(`${file}: this is ${owner}'s profile. Only change your own file (profiles/${author}.json)`);
       continue;
     }
