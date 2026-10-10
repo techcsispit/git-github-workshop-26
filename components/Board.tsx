@@ -2,17 +2,25 @@
 
 import { AnimatePresence, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
-import { hasInterest, matchesSearch, sortProfiles, suitForInterest, SUIT_SYMBOLS, topInterests } from '@/lib/board';
+import {
+  hasInterest, matchesSearch, mostContributions, profileKey, sortProfiles, suitForInterest, SUIT_SYMBOLS, topInterests,
+} from '@/lib/board';
 import type { Profile } from '@/lib/types';
+import { useContributions } from '@/lib/useContributions';
 import { useLiveProfiles } from '@/lib/useLiveProfiles';
 import ContributorCard from './ContributorCard';
 
 export default function Board({ initial }: { initial: Profile[] }) {
   const { profiles, arrivals } = useLiveProfiles(initial, 20_000);
+  const counts = useContributions();
   const [query, setQuery] = useState('');
   const [interest, setInterest] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'contributions'>('name');
 
-  const sorted = useMemo(() => sortProfiles(profiles), [profiles]);
+  const sorted = useMemo(
+    () => (sortBy === 'contributions' && counts ? mostContributions(profiles, counts) : sortProfiles(profiles)),
+    [profiles, counts, sortBy],
+  );
   const interests = useMemo(() => topInterests(profiles), [profiles]);
   const visible = sorted.filter((p) => matchesSearch(p, query) && hasInterest(p, interest));
 
@@ -45,6 +53,15 @@ export default function Board({ initial }: { initial: Profile[] }) {
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search contributors"
         />
+        <select
+          className="sort"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as 'name' | 'contributions')}
+          aria-label="Sort players"
+        >
+          <option value="name">Name</option>
+          <option value="contributions" disabled={!counts}>Most contributions</option>
+        </select>
       </div>
 
       {interests.length > 0 && (
@@ -79,7 +96,11 @@ export default function Board({ initial }: { initial: Profile[] }) {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 26 }}
               >
-                <ContributorCard profile={p} isNew={arrivals.includes(p.github_username.toLowerCase())} />
+                <ContributorCard
+                  profile={p}
+                  isNew={arrivals.includes(p.github_username.toLowerCase())}
+                  contributions={counts ? counts[profileKey(p)] ?? 0 : undefined}
+                />
               </motion.div>
             ))}
           </AnimatePresence>

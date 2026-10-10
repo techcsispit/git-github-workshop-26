@@ -25,7 +25,7 @@ let cache: { at: number; profiles: Profile[] } | null = null;
 // refreshes so only new files need looking up.
 const joinedAt = new Map<string, string>();
 
-async function graphql(query: string, variables: Record<string, string>) {
+export async function graphql(query: string, variables: Record<string, string | null>) {
   const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { checkProfile } from '../scripts/validate.mjs';
 import {
-  accentFor, findProfile, hasInterest, matchesSearch, mergeProfiles, newArrivals, newestFirst, nextSpotlight, sortProfiles,
-  spotlightDuration, topInterests,
+  accentFor, findProfile, hasInterest, matchesSearch, mergeProfiles, mostContributions, newArrivals, newestFirst, nextSpotlight,
+  sortProfiles, spotlightDuration, topInterests,
 } from './board';
 import type { Profile } from './types';
 
@@ -35,6 +35,13 @@ describe('board', () => {
   it('filters by interest', () => {
     expect(hasInterest(person('A', 'a', ['Web Dev']), 'web dev')).toBe(true);
     expect(hasInterest(person('A', 'a', ['Go']), 'Rust')).toBe(false);
+  });
+
+  it('sorts by most contributions, then by name', () => {
+    const list = [person('Zara', 'Zara', ['Go']), person('Ben', 'ben', ['Go']), person('Amy', 'amy', ['Go']), person('Dev', 'dev', ['Go'])];
+    const sorted = mostContributions(list, { zara: 5, amy: 2, ben: 2 });
+    expect(sorted.map((p) => p.name)).toEqual(['Zara', 'Amy', 'Ben', 'Dev']);
+    expect(list.map((p) => p.name)).toEqual(['Zara', 'Ben', 'Amy', 'Dev']);
   });
 
   it('gives the same suit a stable colour regardless of username casing', () => {
